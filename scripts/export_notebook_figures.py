@@ -8,22 +8,22 @@
 """
 
 import sys
-import os
 from pathlib import Path
+from typing import Any, cast
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from sklearn.preprocessing import StandardScaler
-from sklearn.metrics import precision_recall_curve, roc_curve, auc, brier_score_loss
+from sklearn.metrics import precision_recall_curve, auc
 from sklearn.ensemble import HistGradientBoostingClassifier, RandomForestClassifier, IsolationForest
 from sklearn.linear_model import LogisticRegression
 
 root_dir = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(root_dir))
 
-from backend.ml.evaluation.threshold_optimizer import find_optimal_threshold, compute_expected_cost
+from backend.ml.evaluation.threshold_optimizer import find_optimal_threshold, compute_expected_cost  # noqa: E402
 
 def setup_figures_dir() -> Path:
     out_dir = root_dir / "docs" / "figures"
@@ -52,7 +52,7 @@ def generate_all_figures():
     feature_cols = [c for c in df.columns if c not in ["isFraud", "Class", "Time", "is_fraud"]]
 
     X = df[feature_cols].fillna(0).values[:30000]
-    y = df[target_col].values[:30000]
+    y = np.asarray(df[target_col].values[:30000])
 
     scaler = StandardScaler()
     X_scaled = scaler.fit_transform(X)
@@ -101,7 +101,7 @@ def generate_all_figures():
 
     # 3. Isolation Forest Anomaly Score Distribution
     print(" -> 3. Dang xuat 06_isolation_forest_distribution.png...")
-    iso = IsolationForest(n_estimators=100, contamination=0.01, random_state=42).fit(X_scaled)
+    iso = IsolationForest(n_estimators=100, contamination=cast(Any, 0.01), random_state=42).fit(X_scaled)
     anomaly_scores = -iso.score_samples(X_scaled)
 
     plt.figure(figsize=(7, 5), dpi=300)

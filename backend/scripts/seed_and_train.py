@@ -18,12 +18,12 @@ import pandas as pd
 root_dir = Path(__file__).resolve().parent.parent.parent
 sys.path.insert(0, str(root_dir))
 
-from backend.core.security import hash_password
-from backend.infrastructure.db.session import SessionLocal, init_db
-from backend.infrastructure.db.models.orm_models import (
+from backend.core.security import hash_password  # noqa: E402
+from backend.infrastructure.db.session import SessionLocal, init_db  # noqa: E402
+from backend.infrastructure.db.models.orm_models import (  # noqa: E402
     UserORM, TransactionORM, ModelPredictionORM, FraudCaseORM, ModelVersionORM, AnalystReviewORM
 )
-from backend.ml.inference.shap_explainer import generate_shap_explanation
+from backend.ml.inference.shap_explainer import generate_shap_explanation  # noqa: E402
 
 def seed_database():
     """
@@ -114,14 +114,14 @@ def seed_database():
         print(f"[INFO] Dang nap {len(df_paysim)} giao dich PaySim vao CSDL...")
 
         # { loop-1: duyet qua 40 ban ghi PaySim va sinh du lieu ca rui ro }
-        for idx, row in df_paysim.iterrows():
+        for idx, row in enumerate(df_paysim.to_dict("records")):
             is_fraud = int(row.get("isFraud", 0))
             amount = float(row.get("amount", 25000000.0))
             is_transfer = bool(row.get("is_transfer", 1))
             step = int(row.get("step", 1))
 
             txn_id = f"PAYSIM-{1000 + idx}"
-            created_at = now - timedelta(hours=int(idx) * 2 + random.randint(1, 15))
+            created_at = now - timedelta(hours=idx * 2 + random.randint(1, 15))
             
             existing_txn = db.query(TransactionORM).filter_by(transaction_id=txn_id).first()
             if existing_txn:

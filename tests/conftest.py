@@ -13,9 +13,9 @@ os.environ["DATABASE_URL"] = "sqlite:///./test_fraud_platform.db"
 os.environ["JWT_SECRET"] = "super-secret-test-key-must-be-at-least-32-bytes-long!"
 TEST_PASSWORD = "test-password-123"
 
-from backend.infrastructure.db.session import init_db, SessionLocal, engine
-from backend.infrastructure.db.models.orm_models import Base, UserORM
-from backend.core.security import hash_password
+from backend.infrastructure.db.session import init_db, SessionLocal  # noqa: E402
+from backend.infrastructure.db.models.orm_models import UserORM  # noqa: E402
+from backend.core.security import hash_password  # noqa: E402
 
 TEST_USERS = [
     ("11111111-1111-1111-1111-111111111111", "analyst@fraud-platform.com", "ANALYST"),

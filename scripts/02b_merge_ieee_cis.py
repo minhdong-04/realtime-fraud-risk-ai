@@ -13,6 +13,7 @@
 
 import os
 import json
+from typing import Any
 import pandas as pd
 
 RAW_DIR = "data/raw/ieee_cis"
@@ -20,7 +21,7 @@ PROCESSED_DIR = "data/processed/ieee_cis"
 SPLITS_DIR = "data/splits"
 START_DATE = pd.Timestamp("2017-12-01")
 
-TRANSACTION_DTYPES = {
+TRANSACTION_DTYPES: dict[Any, Any] = {
     "TransactionID": "int32",
     "isFraud": "int8",
     "TransactionDT": "int32",
@@ -73,7 +74,7 @@ def load_and_merge(split: str) -> pd.DataFrame:
 
     # { convert: TransactionDT (delta seconds) -> timestamp uoc tinh }
     merged["transaction_ts"] = START_DATE + pd.to_timedelta(
-        merged["TransactionDT"], unit="s"
+        merged["TransactionDT"].to_numpy(), unit="s"
     )
     print(f"[{split.upper()}] Done — shape: {merged.shape}")
     return merged
@@ -139,15 +140,15 @@ def main():
         "train_rows": len(train),
         "val_rows": len(val),
         "test_rows": len(test),
-        "fraud_rate_train": float(train["isFraud"].mean()),
-        "fraud_rate_val": float(val["isFraud"].mean()),
-        "fraud_rate_test": float(test["isFraud"].mean()),
-        "train_dt_min": int(train["TransactionDT"].min()),
-        "train_dt_max": int(train["TransactionDT"].max()),
-        "val_dt_min": int(val["TransactionDT"].min()),
-        "val_dt_max": int(val["TransactionDT"].max()),
-        "test_dt_min": int(test["TransactionDT"].min()),
-        "test_dt_max": int(test["TransactionDT"].max()),
+        "fraud_rate_train": float(train["isFraud"].to_numpy().mean()),
+        "fraud_rate_val": float(val["isFraud"].to_numpy().mean()),
+        "fraud_rate_test": float(test["isFraud"].to_numpy().mean()),
+        "train_dt_min": int(train["TransactionDT"].to_numpy().min()),
+        "train_dt_max": int(train["TransactionDT"].to_numpy().max()),
+        "val_dt_min": int(val["TransactionDT"].to_numpy().min()),
+        "val_dt_max": int(val["TransactionDT"].to_numpy().max()),
+        "test_dt_min": int(test["TransactionDT"].to_numpy().min()),
+        "test_dt_max": int(test["TransactionDT"].to_numpy().max()),
         "note": "Time-based split. test_merged.parquet tu Kaggle (khong co label).",
     }
 
@@ -155,7 +156,7 @@ def main():
     for name, split_df in [("train", train), ("val", val), ("test", test)]:
         path = f"{PROCESSED_DIR}/{name}_merged.parquet"
         split_df.to_parquet(path, index=False, compression="snappy")
-        fraud_rate = split_df.get("isFraud", pd.Series([0])).mean()
+        fraud_rate = float(split_df["isFraud"].to_numpy().mean()) if "isFraud" in split_df.columns else 0.0
         print(f"  [SAVED] {path} — {len(split_df):,} rows | fraud rate: {fraud_rate:.4f}")
 
     config_path = f"{SPLITS_DIR}/ieee_cis_split_config.json"

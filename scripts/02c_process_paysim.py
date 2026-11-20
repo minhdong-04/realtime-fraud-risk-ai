@@ -17,6 +17,7 @@
 
 import os
 import json
+from typing import Any
 import pandas as pd
 
 RAW_PATH = "data/raw/paysim/PS_log.csv"
@@ -25,7 +26,7 @@ PROCESSED_DIR = "data/processed/paysim"
 FEATURES_DIR = "data/features/paysim"
 SPLITS_DIR = "data/splits"
 
-PAYSIM_DTYPES = {
+PAYSIM_DTYPES: dict[Any, Any] = {
     "step": "int32",
     "type": "category",
     "amount": "float32",
@@ -59,7 +60,7 @@ def load_and_filter(path: str) -> pd.DataFrame:
 
     # { filter: chi TRANSFER va CASH_OUT vi fraud pattern chi o 2 loai nay }
     fraud_types = ["TRANSFER", "CASH_OUT"]
-    df_filtered = df[df["type"].isin(fraud_types)].copy()
+    df_filtered = pd.DataFrame(df[df["type"].isin(fraud_types)]).copy()
     print(f"[INFO] Filtered (TRANSFER/CASH_OUT): {len(df_filtered):,} rows | fraud: {df_filtered['isFraud'].sum():,}")
     return df_filtered
 

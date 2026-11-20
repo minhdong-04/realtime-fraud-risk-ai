@@ -39,7 +39,7 @@ def setup_data_architecture():
         os.makedirs(path, exist_ok=True)
         gitkeep = os.path.join(path, ".gitkeep")
         if not os.path.exists(gitkeep):
-            with open(gitkeep, "w") as f:
+            with open(gitkeep, "w"):
                 pass
 
     # Chuan hoa ten file PaySim neu co file ten dai

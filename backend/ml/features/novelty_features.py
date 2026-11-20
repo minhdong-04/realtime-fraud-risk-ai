@@ -9,7 +9,7 @@ from uuid import UUID
 from backend.domain.entities.transaction import Transaction
 
 def compute_new_device_flag(
-    device_id: UUID | None,
+    device_id: UUID | str | None,
     history: list[Transaction],
 ) -> int:
     """
@@ -32,20 +32,20 @@ def compute_new_device_flag(
     return 0 if seen else 1
 
 def compute_new_merchant_flag(
-    merchant_id: UUID,
+    merchant_id: UUID | str | None,
     history: list[Transaction],
 ) -> int:
     """
     {
         func   : compute_new_merchant_flag
         desc   : Kiểm tra merchant hiện tại có phải merchant mới đối với tài khoản
-        input  : merchant_id (UUID) — ID merchant hiện tại
+        input  : merchant_id (UUID | str | None) — ID merchant hiện tại
                  history (list[Transaction]) — lịch sử giao dịch của tài khoản
         output : (int) — 1 nếu merchant mới, 0 nếu đã ghé thăm trước đây
         loop   : 1 loop — kiểm tra sự tồn tại của merchant_id trong lịch sử
     }
     """
-    if not history:
+    if merchant_id is None or not history:
         return 1
 
     # { loop-2: duyệt lịch sử xem merchant đã từng thực hiện giao dịch chưa }

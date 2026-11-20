@@ -8,7 +8,7 @@
 import csv
 import io
 from sqlalchemy.orm import Session
-from backend.infrastructure.db.models.orm_models import TransactionORM, AnalystReviewORM
+from backend.infrastructure.db.models.orm_models import TransactionORM
 
 class ReportService:
     """

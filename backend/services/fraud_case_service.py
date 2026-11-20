@@ -6,12 +6,10 @@
 """
 
 from uuid import UUID
-from typing import Any
 from sqlalchemy.orm import Session
 
 from backend.domain.entities.fraud_case import FraudCase, AnalystDecision, CaseStatus
 from backend.domain.repositories.i_fraud_case_repository import IFraudCaseRepository
-from backend.domain.value_objects.risk_score import RiskScore, RiskLevel
 from backend.domain.exceptions import CaseAlreadyClosedError
 from backend.infrastructure.db.models.orm_models import AnalystReviewORM, FraudLabelORM, AuditLogORM, FraudCaseORM
 

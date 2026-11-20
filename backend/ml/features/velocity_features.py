@@ -18,7 +18,7 @@ def _ensure_utc(dt: datetime) -> datetime:
 
 def compute_txn_count_5m(
     history: list[Transaction],
-    current_ts: datetime,
+    current_ts: datetime | None,
 ) -> int:
     """
     {
@@ -43,7 +43,7 @@ def compute_txn_count_5m(
 
 def compute_txn_count_1h(
     history: list[Transaction],
-    current_ts: datetime,
+    current_ts: datetime | None,
 ) -> int:
     """
     {
@@ -68,7 +68,7 @@ def compute_txn_count_1h(
 
 def compute_amount_sum_1h(
     history: list[Transaction],
-    current_ts: datetime,
+    current_ts: datetime | None,
 ) -> float:
     """
     {
@@ -92,7 +92,7 @@ def compute_amount_sum_1h(
 
 def compute_unique_merchants_1h(
     history: list[Transaction],
-    current_ts: datetime,
+    current_ts: datetime | None,
 ) -> int:
     """
     {

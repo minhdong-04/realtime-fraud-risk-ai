@@ -6,7 +6,6 @@
 """
 
 import time
-import pytest
 from backend.ml.inference.risk_engine import RiskEngine
 from backend.ml.features.feature_definitions import FEATURE_NAMES
 import numpy as np

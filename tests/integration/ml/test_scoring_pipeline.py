@@ -5,13 +5,11 @@
 }
 """
 
-import pytest
 from uuid import uuid4
 from datetime import datetime, timezone
 from backend.infrastructure.db.session import SessionLocal, init_db
 from backend.infrastructure.db.models.orm_models import FraudCaseORM, ModelPredictionORM, TransactionORM
 from backend.domain.entities.transaction import Transaction, TransactionType, TransactionChannel
-from backend.domain.value_objects.risk_score import RiskLevel
 from backend.services.scoring_service import ScoringService
 from backend.services.fraud_case_service import FraudCaseService
 from backend.ml.inference.risk_engine import RiskEngine
@@ -22,9 +20,10 @@ def test_it_score_01_scoring_pipeline_integration():
     init_db()
     db = SessionLocal()
     txn_id_str = f"t-pipe-{uuid4()}"
+    pred = None
     try:
         mock_xgb = XGBoostStrategy(model=None)
-        mock_xgb.predict_proba = lambda x: 0.85
+        setattr(mock_xgb, "predict_proba", lambda x: 0.85)
         engine = RiskEngine(supervised_model=mock_xgb)
         svc = ScoringService(db=db, engine=engine)
 
@@ -45,7 +44,7 @@ def test_it_score_01_scoring_pipeline_integration():
         assert pred.fraud_probability == 0.85
     finally:
         db.query(FraudCaseORM).filter_by(transaction_id=txn_id_str).delete()
-        if 'pred' in locals() and pred and pred.id:
+        if pred and pred.id:
             db.query(ModelPredictionORM).filter_by(id=pred.id).delete()
         db.commit()
         db.close()
@@ -55,9 +54,10 @@ def test_it_score_02_prediction_persisted_in_db():
     init_db()
     db = SessionLocal()
     txn_id_str = f"t-pred-{uuid4()}"
+    pred = None
     try:
         mock_xgb = XGBoostStrategy(model=None)
-        mock_xgb.predict_proba = lambda x: 0.45
+        setattr(mock_xgb, "predict_proba", lambda x: 0.45)
         engine = RiskEngine(supervised_model=mock_xgb)
         svc = ScoringService(db=db, engine=engine)
 
@@ -75,7 +75,7 @@ def test_it_score_02_prediction_persisted_in_db():
         assert pred.id is not None
     finally:
         db.query(FraudCaseORM).filter_by(transaction_id=txn_id_str).delete()
-        if 'pred' in locals() and pred and pred.id:
+        if pred and pred.id:
             db.query(ModelPredictionORM).filter_by(id=pred.id).delete()
         db.commit()
         db.close()

@@ -6,7 +6,6 @@
 }
 """
 
-import asyncio
 import json
 import logging
 import os
@@ -62,8 +61,9 @@ class ScoringConsumer:
             # { loop-1: xu ly tung message tu Kafka topic }
             async for msg in consumer:
                 try:
-                    result = self.process_event(msg.value)
-                    logger.info("Da cham diem: score=%.4f", result["score"])
+                    if isinstance(msg.value, dict):
+                        result = self.process_event(msg.value)
+                        logger.info("Da cham diem: score=%.4f", result["score"])
                 except Exception as exc:
                     logger.error("Loi xu ly event: %s", exc)
         finally:
@@ -79,7 +79,7 @@ class ScoringConsumer:
             loop   : 0 loops
         }
         """
-        fraud_proba, anomaly_score, risk_score = self._engine.evaluate(features)
+        fraud_proba, anomaly_score, risk_score = self._engine.evaluate(event_data)
         return {
             "fraud_probability": fraud_proba,
             "anomaly_score": anomaly_score,

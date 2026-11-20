@@ -11,10 +11,10 @@
 """
 
 import sys
-import os
 import json
 import time
 from pathlib import Path
+from typing import Any, cast
 import numpy as np
 import pandas as pd
 import joblib
@@ -25,10 +25,10 @@ from sklearn.ensemble import HistGradientBoostingClassifier, IsolationForest
 root_dir = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(root_dir))
 
-from backend.ml.evaluation.threshold_optimizer import find_optimal_threshold
-from backend.ml.evaluation.calibration import compute_brier_score, platt_scale_probabilities
-from backend.infrastructure.db.session import SessionLocal, init_db
-from backend.infrastructure.db.models.orm_models import ModelVersionORM
+from backend.ml.evaluation.threshold_optimizer import find_optimal_threshold  # noqa: E402
+from backend.ml.evaluation.calibration import compute_brier_score, platt_scale_probabilities  # noqa: E402
+from backend.infrastructure.db.session import SessionLocal, init_db  # noqa: E402
+from backend.infrastructure.db.models.orm_models import ModelVersionORM  # noqa: E402
 
 ARTIFACTS_DIR = root_dir / "backend" / "ml" / "artifacts"
 ARTIFACTS_DIR.mkdir(parents=True, exist_ok=True)
@@ -54,8 +54,8 @@ def train_ulb_dataset() -> dict:
     df_test = pd.read_parquet(test_path)
 
     feat_cols = [c for c in df_train.columns if c not in ["isFraud", "Class", "Time"]]
-    X_train, y_train = df_train[feat_cols].values, df_train["isFraud"].values
-    X_test, y_test = df_test[feat_cols].values, df_test["isFraud"].values
+    X_train, y_train = df_train[feat_cols].values, np.asarray(df_train["isFraud"].values)
+    X_test, y_test = df_test[feat_cols].values, np.asarray(df_test["isFraud"].values)
 
     scaler = StandardScaler()
     X_train_scaled = scaler.fit_transform(X_train)
@@ -131,7 +131,7 @@ def train_paysim_and_export_hybrid(ulb_res: dict) -> dict:
 
     # Huan luyen Isolation Forest de phat hien gian lan chua tung gap (Zero-day)
     print(" -> Huan luyen Isolation Forest (Anomaly Detection)...")
-    iso_forest = IsolationForest(n_estimators=100, contamination=0.01, random_state=42, n_jobs=-1)
+    iso_forest = IsolationForest(n_estimators=100, contamination=cast(Any, 0.01), random_state=42, n_jobs=-1)
     
     # Su dung du lieu da scale de fit Isolation Forest
     train_path = root_dir / "data" / "processed" / "ubl_creditcard" / "train.parquet"
@@ -144,7 +144,7 @@ def train_paysim_and_export_hybrid(ulb_res: dict) -> dict:
     test_path = root_dir / "data" / "processed" / "ubl_creditcard" / "test.parquet"
     df_test = pd.read_parquet(test_path)
     X_test_scaled = ulb_res["scaler"].transform(df_test[feat_cols].values)
-    y_test = df_test["isFraud"].values
+    y_test = np.asarray(df_test["isFraud"].values)
     
     y_proba = ulb_res["model"].predict_proba(X_test_scaled)[:, 1]
     optimal_th, min_cost = find_optimal_threshold(y_test, y_proba, cost_fn=100.0, cost_fp=1.0)
@@ -172,7 +172,7 @@ def train_paysim_and_export_hybrid(ulb_res: dict) -> dict:
     with open(ARTIFACTS_DIR / "metadata.json", "w", encoding="utf-8") as f:
         json.dump(metadata, f, indent=2)
 
-    print(f" -> [THANH CONG] Da xuat metadata va toan bo artifacts.")
+    print(" -> [THANH CONG] Da xuat metadata va toan bo artifacts.")
     return metadata
 
 def update_db_registry(meta: dict):

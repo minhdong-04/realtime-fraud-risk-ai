@@ -8,7 +8,7 @@ from uuid import UUID, uuid4
 from backend.domain.entities.transaction import Transaction, TransactionType, TransactionChannel
 from backend.domain.exceptions import VelocityError
 from backend.ml.features.velocity_features import (
-    compute_txn_count_5m, compute_txn_count_1h, compute_amount_sum_1h, compute_unique_merchants_1h
+    compute_txn_count_5m, compute_txn_count_1h, compute_amount_sum_1h
 )
 
 @pytest.fixture

@@ -9,8 +9,6 @@ import pytest
 from uuid import uuid4
 from fastapi.testclient import TestClient
 from backend.apps.api.main import app
-from backend.infrastructure.db.session import init_db, SessionLocal
-from backend.infrastructure.db.models.orm_models import UserORM
 
 client = TestClient(app)
 

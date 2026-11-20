@@ -6,11 +6,12 @@
 }
 """
 
+import io
 import sys
-import os
 import time
 import subprocess
 from pathlib import Path
+from typing import Any, cast
 import json
 import numpy as np
 import pandas as pd
@@ -21,17 +22,17 @@ from sklearn.ensemble import IsolationForest, RandomForestClassifier, HistGradie
 from sklearn.linear_model import LogisticRegression
 
 # Thiet lap ma hoa an toan cho Windows Console
-if hasattr(sys.stdout, "reconfigure"):
+if isinstance(sys.stdout, io.TextIOWrapper):
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
 # Thiet lap thu muc goc vao sys.path
 root_dir = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(root_dir))
 
-from backend.ml.models.xgboost_model import XGBoostStrategy
-from backend.ml.models.isolation_forest_model import IsolationForestStrategy
-from backend.ml.evaluation.threshold_optimizer import find_optimal_threshold
-from backend.scripts.seed_and_train import seed_database
+from backend.ml.models.xgboost_model import XGBoostStrategy  # noqa: E402
+from backend.ml.models.isolation_forest_model import IsolationForestStrategy  # noqa: E402
+from backend.ml.evaluation.threshold_optimizer import find_optimal_threshold  # noqa: E402
+from backend.scripts.seed_and_train import seed_database  # noqa: E402
 
 def print_step(title: str, step_num: int):
     print("\n" + "=" * 80)
@@ -94,7 +95,7 @@ def train_and_export_models():
     target_col = "Class" if "Class" in df_train.columns else ("isFraud" if "isFraud" in df_train.columns else "is_fraud")
 
     X_train = df_train[feature_cols].fillna(0).values[:50000]
-    y_train = df_train[target_col].values[:50000]
+    y_train = np.asarray(df_train[target_col].values[:50000])
 
     scaler = StandardScaler()
     X_train_scaled = scaler.fit_transform(X_train)
@@ -110,7 +111,7 @@ def train_and_export_models():
     xgb_strategy = XGBoostStrategy(model=raw_xgb, version="v1.0.0")
 
     print(" -> 2. Dang huan luyen Isolation Forest (Anomaly Detection)...")
-    raw_iso = IsolationForest(n_estimators=100, contamination=0.01, random_state=42)
+    raw_iso = IsolationForest(n_estimators=100, contamination=cast(Any, 0.01), random_state=42)
     raw_iso.fit(X_train_scaled)
     iso_strategy = IsolationForestStrategy(model=raw_iso, version="v1.0.0")
 
@@ -189,7 +190,7 @@ def main():
     print("#" * 80)
 
     run_data_processing()
-    meta = train_and_export_models()
+    train_and_export_models()
     run_database_seed()
     success = run_quality_gates()
 

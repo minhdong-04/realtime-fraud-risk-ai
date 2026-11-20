@@ -5,6 +5,7 @@
 }
 """
 
+from typing import Any
 import numpy as np
 from backend.ml.models.base_model import FraudModelStrategy
 
@@ -17,7 +18,7 @@ class RandomForestStrategy(FraudModelStrategy):
     }
     """
 
-    def __init__(self, model: object | None = None, version: str = "v0.2.0-baseline") -> None:
+    def __init__(self, model: Any = None, version: str = "v0.2.0-baseline") -> None:
         self._model = model
         self._version = version
 

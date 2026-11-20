@@ -5,7 +5,6 @@
 }
 """
 
-import pytest
 import jwt
 from backend.apps.api.dependencies import SECRET_KEY, ALGORITHM
 

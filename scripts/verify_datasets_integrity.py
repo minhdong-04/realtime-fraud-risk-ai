@@ -9,14 +9,13 @@
 }
 """
 
+import io
 import sys
-import os
 import json
 from pathlib import Path
 import pandas as pd
-import joblib
 
-if hasattr(sys.stdout, "reconfigure"):
+if isinstance(sys.stdout, io.TextIOWrapper):
     sys.stdout.reconfigure(encoding="utf-8")
 
 ROOT = Path(__file__).resolve().parent.parent

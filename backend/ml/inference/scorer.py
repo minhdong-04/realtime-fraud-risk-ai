@@ -6,6 +6,7 @@
 """
 
 import hashlib
+from typing import Any
 import numpy as np
 from backend.ml.models.base_model import FraudModelStrategy
 
@@ -42,7 +43,7 @@ class CachingScorer:
     }
     """
 
-    def __init__(self, wrapped: RealScorer, cache_adapter: any = None, ttl: int = 300) -> None:
+    def __init__(self, wrapped: RealScorer, cache_adapter: Any = None, ttl: int = 300) -> None:
         self._wrapped = wrapped
         self._cache = cache_adapter
         self._ttl = ttl

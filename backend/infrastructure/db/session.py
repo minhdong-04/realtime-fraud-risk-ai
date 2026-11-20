@@ -6,6 +6,7 @@
 """
 
 import os
+from collections.abc import Iterator
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, Session
 from backend.infrastructure.db.models.orm_models import Base
@@ -32,7 +33,7 @@ def init_db() -> None:
     """
     Base.metadata.create_all(bind=engine)
 
-def get_db() -> Session:
+def get_db() -> Iterator[Session]:
     """
     {
         func   : get_db

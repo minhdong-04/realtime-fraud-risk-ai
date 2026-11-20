@@ -7,11 +7,10 @@
 
 from typing import Sequence
 from uuid import UUID, uuid5, NAMESPACE_DNS
-from datetime import datetime, timezone
+from datetime import datetime
 import base64
 import json
 from sqlalchemy.orm import Session
-from sqlalchemy import desc
 
 from backend.domain.entities.fraud_case import FraudCase, CaseStatus
 from backend.domain.value_objects.risk_score import RiskScore, RiskLevel
@@ -90,7 +89,7 @@ class PostgresFraudCaseRepository(IFraudCaseRepository):
             query = query.filter(FraudCaseORM.risk_level == risk_level.value)
         if status and status.upper() != "ALL":
             query = query.filter(FraudCaseORM.status == status.upper())
-        rows = query.order_by(desc(FraudCaseORM.risk_score)).limit(limit).all()
+        rows = query.order_by(FraudCaseORM.risk_score.desc()).limit(limit).all()
         # { loop-1: format danh sach domain }
         return [self._to_domain(r) for r in rows]
 
@@ -137,7 +136,7 @@ class PostgresFraudCaseRepository(IFraudCaseRepository):
             except Exception:
                 pass
 
-        query = query.order_by(desc(FraudCaseORM.created_at), desc(FraudCaseORM.id))
+        query = query.order_by(FraudCaseORM.created_at.desc(), FraudCaseORM.id.desc())
         rows = query.limit(limit + 1).all()
 
         has_more = len(rows) > limit

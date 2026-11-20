@@ -14,8 +14,8 @@ ROOT_DIR = Path(__file__).resolve().parent.parent
 if str(ROOT_DIR) not in sys.path:
     sys.path.insert(0, str(ROOT_DIR))
 
-from scripts.notebook_templates_base import build_nb_03_baseline, build_nb_04_imbalanced
-from scripts.notebook_templates_advanced import (
+from scripts.notebook_templates_base import build_nb_03_baseline, build_nb_04_imbalanced  # noqa: E402
+from scripts.notebook_templates_advanced import (  # noqa: E402
     build_nb_05_threshold,
     build_nb_06_hybrid,
     build_nb_07_shap,

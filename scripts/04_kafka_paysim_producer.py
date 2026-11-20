@@ -10,6 +10,7 @@
 }
 """
 
+import io
 import sys
 import os
 import json
@@ -17,9 +18,10 @@ import time
 import uuid
 import argparse
 import urllib.request
+from typing import Any
 import pandas as pd
 
-if hasattr(sys.stdout, "reconfigure"):
+if isinstance(sys.stdout, io.TextIOWrapper):
     sys.stdout.reconfigure(encoding="utf-8")
 
 SAMPLE_PATH = "data/features/paysim/streaming_sample.parquet"
@@ -28,7 +30,7 @@ TOPIC = "transaction.created"
 API_SCORE_URL = "http://localhost:8000/internal/v1/score"
 INTERNAL_API_KEY = os.environ.get("INTERNAL_API_KEY", "development-internal-key")
 
-def row_to_transaction(row: pd.Series) -> dict:
+def row_to_transaction(row: dict[Any, Any]) -> dict:
     """
     {
         func   : row_to_transaction
@@ -131,7 +133,7 @@ def main():
     fraud_count = 0
 
     # { loop-1: stream tung row voi delay de simulate real-time }
-    for _, row in df.iterrows():
+    for row in df.to_dict("records"):
         payload = row_to_transaction(row)
         if producer:
             try:

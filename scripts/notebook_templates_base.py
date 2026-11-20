@@ -6,10 +6,10 @@
 """
 
 def make_md(lines):
-    return {"cell_type": "markdown", "metadata": {}, "source": [l + "\n" for l in lines]}
+    return {"cell_type": "markdown", "metadata": {}, "source": [line + "\n" for line in lines]}
 
 def make_code(lines):
-    return {"cell_type": "code", "execution_count": None, "metadata": {}, "outputs": [], "source": [l + "\n" for l in lines]}
+    return {"cell_type": "code", "execution_count": None, "metadata": {}, "outputs": [], "source": [line + "\n" for line in lines]}
 
 def build_nb_03_baseline():
     """Tao notebook 03_baseline_models.ipynb"""

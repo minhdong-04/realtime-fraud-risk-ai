@@ -5,6 +5,7 @@
 }
 """
 
+from typing import Any
 import numpy as np
 from backend.ml.models.base_model import FraudModelStrategy
 
@@ -17,7 +18,7 @@ class XGBoostStrategy(FraudModelStrategy):
     }
     """
 
-    def __init__(self, model: any = None, version: str = "v1.0.0") -> None:
+    def __init__(self, model: Any = None, version: str = "v1.0.0") -> None:
         self._model = model
         self._version = version
 

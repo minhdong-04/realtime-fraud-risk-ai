@@ -2,7 +2,6 @@
 Unit tests for Risk Engine and BR-03 policy (UT-RE-01..11).
 """
 
-import pytest
 from backend.ml.inference.risk_engine import compute_hybrid_score, RiskEngine
 from backend.domain.policies.risk_threshold_policy import RiskThresholdPolicy
 from backend.domain.value_objects.risk_score import RiskLevel

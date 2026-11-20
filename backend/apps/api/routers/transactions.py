@@ -5,7 +5,6 @@
 }
 """
 
-import os
 from pathlib import Path
 from uuid import UUID, uuid4
 import pandas as pd
@@ -99,12 +98,12 @@ def simulate_paysim_transactions(
     if fraud_only:
         df = df[df["isFraud"] == 1]
     
-    sample_df = df.sample(n=min(count, len(df)), random_state=None)
+    sample_df = pd.DataFrame(df.sample(n=min(count, len(df)), random_state=None))
     scoring_svc = ScoringService(db=db, engine=risk_engine_instance)
     results = []
 
     # { loop-1: duyệt qua từng bản ghi PaySim, chấm điểm và đánh giá độ chính xác }
-    for _, row in sample_df.iterrows():
+    for row in sample_df.to_dict("records"):
         txn_id = f"PAYSIM-{uuid4().hex[:8].upper()}"
         amount = float(row.get("amount", 15000000.0))
         is_fraud = int(row.get("isFraud", 0))

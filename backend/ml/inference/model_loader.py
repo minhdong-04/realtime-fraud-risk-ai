@@ -7,6 +7,7 @@
 
 import os
 import logging
+from typing import Any, cast
 import numpy as np
 
 logger = logging.getLogger(__name__)
@@ -74,7 +75,7 @@ def _train_default_isolation_forest():
     X_normal = rng.randn(5000, 8) * 0.5
     model = IsolationForest(
         n_estimators=100,
-        contamination=0.02,
+        contamination=cast(Any, 0.02),
         random_state=42,
     )
     model.fit(X_normal)

@@ -2,7 +2,6 @@
 ML Data Leakage Tests (ML-DL-01..06).
 """
 
-import pytest
 from datetime import datetime, timezone, timedelta
 
 def test_ml_dl_01_smote_not_applied_to_test_set():
@@ -32,9 +31,10 @@ def test_ml_dl_04_target_encoding_training_fold_only():
     """ML-DL-04: Target encoding chỉ được tính từ training folds"""
     train_targets = [1, 0, 1, 0, 1]
     val_targets = [0, 0]
-    # Mean tính trên train set
+    # Mean tính chỉ trên train set, không pha lẫn val_targets
     enc_mean = sum(train_targets) / len(train_targets)
-    assert enc_mean == 0.6
+    combined_mean = sum(train_targets + val_targets) / len(train_targets + val_targets)
+    assert enc_mean == 0.6 and enc_mean != combined_mean
 
 def test_ml_dl_05_time_ordering_strict():
     """ML-DL-05: Verify strict time ordering train < val < test"""

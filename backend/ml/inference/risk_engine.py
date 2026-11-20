@@ -6,7 +6,7 @@
 """
 
 import numpy as np
-from backend.domain.value_objects.risk_score import RiskScore, RiskLevel
+from backend.domain.value_objects.risk_score import RiskScore
 from backend.domain.policies.risk_threshold_policy import RiskThresholdPolicy
 from backend.ml.models.base_model import FraudModelStrategy
 from backend.ml.models.xgboost_model import XGBoostStrategy
@@ -64,7 +64,7 @@ class RiskEngine:
 
     def evaluate(
         self,
-        features: np.ndarray | dict = None,
+        features: np.ndarray | dict | None = None,
         amount: float = 100000.0,
         is_new_device: bool = False,
     ) -> tuple[float, float, RiskScore]:

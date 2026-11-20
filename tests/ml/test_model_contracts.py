@@ -5,7 +5,6 @@
 }
 """
 
-import pytest
 import numpy as np
 from backend.ml.models.xgboost_model import XGBoostStrategy
 from backend.ml.models.isolation_forest_model import IsolationForestStrategy

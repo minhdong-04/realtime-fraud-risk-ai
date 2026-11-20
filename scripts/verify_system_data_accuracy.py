@@ -5,26 +5,27 @@
 }
 """
 
+import io
 import sys
 from uuid import uuid4
 from pathlib import Path
 
 # Thiet lap UTF-8 output cho console Windows
-if hasattr(sys.stdout, "reconfigure"):
+if isinstance(sys.stdout, io.TextIOWrapper):
     sys.stdout.reconfigure(encoding="utf-8")
 
 # Them thu muc goc vao sys.path
 root_dir = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(root_dir))
 
-from backend.infrastructure.db.session import SessionLocal
-from backend.infrastructure.db.models.orm_models import (
+from backend.infrastructure.db.session import SessionLocal  # noqa: E402
+from backend.infrastructure.db.models.orm_models import (  # noqa: E402
     UserORM, TransactionORM, FraudCaseORM, ModelPredictionORM, AnalystReviewORM
 )
-from backend.ml.inference.risk_engine import RiskEngine
-from backend.services.scoring_service import ScoringService
-from fastapi.testclient import TestClient
-from backend.apps.api.main import app
+from backend.ml.inference.risk_engine import RiskEngine  # noqa: E402
+from backend.services.scoring_service import ScoringService  # noqa: E402
+from fastapi.testclient import TestClient  # noqa: E402
+from backend.apps.api.main import app  # noqa: E402
 
 def run_comprehensive_audit():
     print("=" * 70)
@@ -38,7 +39,7 @@ def run_comprehensive_audit():
     try:
         # 1. Kiem tra User & Tai khoan phan quyen RBAC
         users = db.query(UserORM).all()
-        print(f"\n[1/5] KIỂM TRA TÀI KHOẢN NGƯỜI DÙNG (RBAC):")
+        print("\n[1/5] KIỂM TRA TÀI KHOẢN NGƯỜI DÙNG (RBAC):")
         print(f"  - Tổng số tài khoản: {len(users)}")
         for u in users:
             print(f"    * Email: {u.email:<30} | Role: {u.role:<15}")
@@ -50,7 +51,7 @@ def run_comprehensive_audit():
         preds = db.query(ModelPredictionORM).all()
         reviews = db.query(AnalystReviewORM).all()
 
-        print(f"\n[2/5] KIỂM TRA DỮ LIỆU CƠ SỞ DỮ LIỆU:")
+        print("\n[2/5] KIỂM TRA DỮ LIỆU CƠ SỞ DỮ LIỆU:")
         print(f"  - Tổng số giao dịch (Transactions): {len(txns):,}")
         print(f"  - Tổng số dự đoán AI (Model Predictions): {len(preds):,}")
         print(f"  - Tổng số ca rủi ro (Fraud Cases): {len(cases):,}")
@@ -67,7 +68,7 @@ def run_comprehensive_audit():
         print(f"  - Phân bổ số tiền giao dịch: Nhỏ nhất = {min_amt:,.0f} VND | Lớn nhất = {max_amt:,.0f} VND | Trung bình = {avg_amt:,.0f} VND")
 
         # 3. Kiem tra Model ML & Tinh toan diem rui ro
-        print(f"\n[3/5] KIỂM TRA MÔ HÌNH HỌC MÁY (ML INFERENCE & SHAP):")
+        print("\n[3/5] KIỂM TRA MÔ HÌNH HỌC MÁY (ML INFERENCE & SHAP):")
         scoring_svc = ScoringService(db=db, engine=RiskEngine())
         
         # Test giao dich hop le binh thuong
@@ -121,7 +122,7 @@ def run_comprehensive_audit():
             "merchant_id": t_fraud.merchant_id,
         })
         print(f"  - Giao dịch bất thường (85M VND + Thiết bị mới): Điểm rủi ro = {score_fraud.value}/100 ({score_fraud.level.value})")
-        print(f"  - Top đặc trưng SHAP giải thích:")
+        print("  - Top đặc trưng SHAP giải thích:")
         for s in shap_fraud[:3]:
             label = s.get("label") or s.get("featureName")
             shap_val = s.get("shapValue", 0.0)
@@ -132,7 +133,7 @@ def run_comprehensive_audit():
         assert score_fraud.level.value in ["HIGH", "MEDIUM"], "Giao dịch bất thường phải có điểm rủi ro cao"
 
         # 4. Kiem tra API End-to-End
-        print(f"\n[4/5] KIỂM TRA TẤT CẢ ENDPOINTS API CHÍNH:")
+        print("\n[4/5] KIỂM TRA TẤT CẢ ENDPOINTS API CHÍNH:")
         
         # API 1: List Fraud Cases
         res_cases = client.get("/api/v1/fraud-cases?limit=5")
