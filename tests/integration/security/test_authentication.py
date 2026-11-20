@@ -25,7 +25,9 @@ def test_sec_auth_01_expired_token():
 def test_sec_auth_02_tampered_signature():
     """SEC-AUTH-02: Từ chối token JWT bị thay đổi chữ ký"""
     token = create_jwt_token({"sub": "analyst@bank.com", "role": "ANALYST"})
-    tampered_token = token[:-5] + "XXXXX"
+    header, payload, signature = token.split(".")
+    flipped = ("B" if signature[0] == "A" else "A") + signature[1:]
+    tampered_token = f"{header}.{payload}.{flipped}"
     with pytest.raises(jwt.InvalidSignatureError):
         jwt.decode(tampered_token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
 

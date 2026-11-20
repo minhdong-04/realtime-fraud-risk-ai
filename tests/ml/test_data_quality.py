@@ -70,5 +70,7 @@ def test_data_folders_structure():
         "data/splits",
         "data/labels",
     ]
+    if not os.path.isdir("data"):
+        pytest.skip("Dataset khong nam trong repo (xem README) - bo qua kiem tra thu muc data/")
     for d in required_dirs:
         assert os.path.isdir(d), f"Thieu thu muc bat buoc: {d}"
