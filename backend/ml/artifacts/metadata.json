@@ -1,0 +1,17 @@
+{
+  "model_name": "xgboost_hybrid",
+  "version": "v1.0.0",
+  "datasets_trained": [
+    "ULB CreditCard (284K)",
+    "IEEE-CIS (590K)",
+    "PaySim (2.77M)"
+  ],
+  "total_records_processed": 3645756,
+  "pr_auc": 0.7548,
+  "roc_auc": 0.9603,
+  "brier_score": 0.0013,
+  "optimal_threshold": 0.23,
+  "expected_cost": 1463.0,
+  "status": "PRODUCTION",
+  "timestamp": "2026-08-16T14:58:48Z"
+}

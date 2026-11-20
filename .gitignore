@@ -1,0 +1,35 @@
+# Secrets & env
+.env
+.env.*
+!.env.example
+
+# Du lieu & artifact nang (tai dataset theo README)
+data/
+*.db
+*.sqlite
+mlflow.db
+
+# Python / Node / build
+.venv/
+venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.pytest-tmp/
+.coverage
+node_modules/
+.next/
+*.tsbuildinfo
+
+# Scratch & tai lieu noi bo: chi giu README.md
+scratch/
+.agents/
+*.md
+!README.md
+docs/
+
+# IDE / OS
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
